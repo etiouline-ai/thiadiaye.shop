@@ -1,0 +1,25 @@
+export const CITIES = [
+  "Thiadiaye",
+  "Mbour",
+  "Saly Portudal",
+  "Ndiaganiao",
+  "Sandiara",
+  "Fissel",
+  "Diass",
+  "Pout",
+  "Sindia",
+  "Joal-Fadiouth",
+  "Fatick",
+  "Kaolack",
+  "Dakar",
+  "Rufisque",
+  "Bargny",
+  "Sébikotane",
+  "Bambey",
+  "Diourbel",
+  "Touba",
+  "Mbacké",
+  "Autre",
+] as const;
+
+export const PHONE_PREFIXES = ["+221", "+223", "+225", "+224", "+222"] as const;

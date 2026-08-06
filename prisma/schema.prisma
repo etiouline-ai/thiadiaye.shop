@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ListingStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+  SOLD
+  ARCHIVED
+}
+
+enum ItemCondition {
+  NEW
+  USED
+}
+
+enum PaymentMethod {
+  ORANGE_MONEY
+  WAVE
+  FREE_MONEY
+  CARD
+  CASH
+}
+
+enum PaymentProvider {
+  MOCK
+  CINETPAY
+  PAYDUNYA
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentType {
+  FEATURED_LISTING
+  BUSINESS_PRO
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  phone         String?
+  businessName  String?
+  role          Role      @default(USER)
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  listings      Listing[]
+  payments      Payment[]
+}
+
+model Category {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  name        String
+  description String?
+  icon        String?
+  parentId    String?
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  listings    Listing[]
+  createdAt   DateTime   @default(now())
+}
+
+model Listing {
+  id             String        @id @default(cuid())
+  slug           String        @unique
+  title          String
+  description    String
+  price          Int?
+  currency       String        @default("FCFA")
+  condition      ItemCondition @default(NEW)
+  status         ListingStatus @default(PENDING)
+  city           String?
+  district       String?
+  phone          String?
+  whatsapp       String?
+  views          Int           @default(0)
+  featuredUntil  DateTime?
+  featuredBy     PaymentMethod?
+  moderationNote String?
+  sellerId       String
+  seller         User          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  categoryId     String
+  category       Category      @relation(fields: [categoryId], references: [id])
+  images         Image[]
+  payments       Payment[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status, categoryId])
+  @@index([sellerId])
+  @@index([createdAt])
+  @@index([featuredUntil])
+  @@index([city])
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id           String          @id @default(cuid())
+  listingId    String?
+  listing      Listing?        @relation(fields: [listingId], references: [id])
+  userId       String
+  user         User            @relation(fields: [userId], references: [id])
+  amount       Int
+  currency     String          @default("XOF")
+  method       PaymentMethod
+  provider     PaymentProvider
+  providerTxId String?
+  status       PaymentStatus   @default(PENDING)
+  type         PaymentType
+  metadata     Json?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([listingId])
+}
