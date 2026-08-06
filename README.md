@@ -10,6 +10,7 @@ Portail d'annonces locales du Sénégal (modèle Expat-Dakar) : mise en relation
 - Upload d'images (max 2 Mo/image, 5 par annonce, conversion WebP via sharp)
 - Mise à la une payante : Orange Money / Wave / Free Money (CinetPay en production, mode `mock` en local)
 - Comptes utilisateurs (JWT httpOnly) et administration avec modération des annonces
+- Confirmation d'email et réinitialisation de mot de passe (SMTP ou log local)
 - Pages légales : CGU, confidentialité, mentions légales
 
 ## Stack
@@ -40,18 +41,17 @@ docker run -d --name thiadiaye-postgres \
 npm install
 
 # 3. Variables d'environnement
-cp .env.example .env   # puis renseignez JWT_SECRET (voir plus bas)
+cp .env.example .env   # puis renseignez JWT_SECRET
+JWT_SECRET : node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 
-# 4. Schéma + extension unaccent + seed
+# 4. Schéma + extension unaccent + index de recherche
 npx prisma db push
-docker exec thiadiaye-postgres psql -U thiadiaye -d thiadiaye_shop -c "CREATE EXTENSION IF NOT EXISTS unaccent;"
+Get-Content prisma\indexes.sql | docker exec -i thiadiaye-postgres psql -U thiadiaye -d thiadiaye_shop -v ON_ERROR_STOP=1
 npm run db:seed
 
 # 5. Lancer
 npm run dev
 ```
-
-JWT_SECRET : `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`
 
 Comptes seedés : `admin@thiadiaye.shop` / `Admin@2026` (changer après la 1re connexion).
 
@@ -67,7 +67,14 @@ npx tsx scripts/integration-test.ts   # test d'intégration (payments, upload, p
 
 ## Tests
 
-Le test d'intégration couvre : création utilisateur/annonce, upload d'image, tarification de la mise en avant (300 FCFA/jour, 7 jours = 2100 FCFA), confirmation webhook, refus d'accès d'un non-propriétaire, et nettoyage complet des données. Le script est idempotent (reprise après échec possible).
+Le test d'intégration couvre : création utilisateur/annonce, upload d'image, tarification de la mise en avant (300 FCFA/jour, 7 jours = 2100 FCFA), confirmation webhook, refus d'accès d'un non-propriétaire, signature HMAC CinetPay et nettoyage complet des données. Le script est idempotent (reprise après échec possible).
+
+Autres vérifications :
+```bash
+node scripts/verify-moderation.mjs     # visibilité publique + recherche sans accents
+npx tsx scripts/verify-email-flow.ts   # confirmation d'email, reset de mot de passe, jetons à usage unique
+npx tsx scripts/verify-upload-route.ts # route de servation d'images (nécessite le serveur lancé)
+```
 
 ## Déploiement (production)
 
@@ -88,6 +95,9 @@ Créer l'extension sur la base distante : `CREATE EXTENSION IF NOT EXISTS unacce
 | `PAYMENT_PROVIDER` | `mock` ou `cinetpay` |
 | `PAYMENT_MODE` | `sandbox` ou `production` |
 | `CINETPAY_API_KEY`, `CINETPAY_SITE_ID` | Identifiants marchand CinetPay |
+| `CINETPAY_SECRET_KEY` | Clé secrète pour vérifier le webhook (`x-token` HMAC) |
+| `EMAIL_DRIVER` | `log` (écrit dans `data/emails/`) ou `smtp` |
+| `EMAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | Envoi réel d'emails |
 | `STORAGE_DRIVER` | `local` ou `s3` |
 | `S3_ENDPOINT`, `S3_BUCKET`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` | Stockage compatible S3 (R2, MinIO, Backblaze…) |
 

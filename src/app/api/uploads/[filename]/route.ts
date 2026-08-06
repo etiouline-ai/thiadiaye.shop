@@ -1,14 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getFile } from "@/lib/storage";
+import { getFile, uploadsPublicUrl } from "@/lib/storage";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ filename: string }> },
 ) {
   const { filename } = await params;
-  const file = getFile(filename);
+
+  const publicUrl = uploadsPublicUrl(filename);
+  if (publicUrl) {
+    return NextResponse.redirect(publicUrl, 307);
+  }
+
+  const file = await getFile(filename);
   if (!file) {
     return new NextResponse("Not found", { status: 404 });
   }

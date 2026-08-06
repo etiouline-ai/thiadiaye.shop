@@ -61,7 +61,7 @@ export default async function ListingsPage({
     const rows = await prisma.$queryRaw<{ id: string }[]>`
       SELECT id FROM "Listing"
       WHERE status = 'PUBLISHED'
-        AND (unaccent(lower(title)) LIKE ${like} OR unaccent(lower(description)) LIKE ${like})
+        AND (immutable_unaccent(lower(title)) LIKE ${like} OR immutable_unaccent(lower(description)) LIKE ${like})
       LIMIT 500
     `;
     where.id = { in: rows.map((r) => r.id) };

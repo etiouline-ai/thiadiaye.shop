@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { MockConfirmPayment } from "@/components/MockConfirmPayment";
+import { PaymentStatusPoller } from "@/components/PaymentStatusPoller";
 
 export const metadata = { title: "Paiement" };
 
@@ -92,10 +93,18 @@ export default async function PaymentPage({
         )}
 
         {isPending && !isMock && (
-          <div className="mt-5 rounded-lg bg-ink-50 p-3 text-sm text-ink-600">
-            💳 Vérifiez votre téléphone : vous recevrez une demande de
-            confirmation {payment.method.replace("_", " ")}. Validez-la pour
-            finaliser le paiement.
+          <div className="mt-5">
+            <div className="rounded-lg bg-ink-50 p-3 text-sm text-ink-600">
+              💳 Vérifiez votre téléphone : vous recevrez une demande de
+              confirmation {payment.method.replace("_", " ")}. Validez-la pour
+              finaliser le paiement.
+            </div>
+            {payment.providerTxId && (
+              <p className="mt-2 text-xs text-ink-400">
+                Numéro de transaction : {payment.providerTxId}
+              </p>
+            )}
+            <PaymentStatusPoller pending />
           </div>
         )}
 

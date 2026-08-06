@@ -4,7 +4,8 @@ import type { PaymentMethod } from "@prisma/client";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-const CINETPAY_BASE = "https://api-checkout.cinetpay.com/v2";
+const CINETPAY_BASE =
+  process.env.CINETPAY_BASE_URL ?? "https://api-checkout.cinetpay.com/v2";
 
 export interface InitiateInput {
   amount: number;
@@ -26,6 +27,12 @@ export function getProvider(): "mock" | "cinetpay" | "paydunya" {
   return p === "cinetpay" ? "cinetpay" : p === "paydunya" ? "paydunya" : "mock";
 }
 
+function confirmationUrl(metadata: Record<string, unknown>): string {
+  const paymentId =
+    typeof metadata.paymentId === "string" ? metadata.paymentId : "";
+  return `${SITE_URL}/compte/paiement/${paymentId}`;
+}
+
 export async function initiatePayment(
   input: InitiateInput,
 ): Promise<InitiateResult> {
@@ -37,7 +44,7 @@ export async function initiatePayment(
 
   // Mock (développement / sans compte marchand)
   const providerTxId = `MOCK-${randomBytes(8).toString("hex").toUpperCase()}`;
-  const paymentUrl = `${SITE_URL}/compte/paiement/${input.reference}?tx=${providerTxId}`;
+  const paymentUrl = `${confirmationUrl(input.metadata)}?tx=${providerTxId}`;
   return { providerTxId, paymentUrl, success: true };
 }
 
@@ -70,25 +77,28 @@ async function initiateCinetpay(input: InitiateInput): Promise<InitiateResult> {
       currency: input.currency,
       description: input.description,
       notify_url: `${SITE_URL}/api/payments/webhook/cinetpay`,
-      return_url: `${SITE_URL}/compte/paiement/${input.reference}`,
+      return_url: confirmationUrl(input.metadata),
       channels: methodMap[input.method] ?? "OM",
+      lang: "fr",
       metadata: input.metadata,
     }),
   });
 
-  const data = (await response.json()) as {
+  const data = (await response.json().catch(() => null)) as {
     code?: string;
     message?: string;
-    data?: { payment_url?: string; payment_token?: string };
-  };
+    data?: { payment_url?: string; payment_token?: string; cpm_trans_id?: string };
+  } | null;
 
-  if (!response.ok || data.code !== "201" || !data.data?.payment_token) {
-    throw new Error(`CinetPay : ${data.message ?? "échec de l'initialisation"}`);
+  if (!response.ok || data?.code !== "201" || !data?.data?.payment_url) {
+    throw new Error(
+      `CinetPay : ${data?.message ?? "échec de l'initialisation"}`,
+    );
   }
 
   return {
-    providerTxId: data.data.payment_token,
-    paymentUrl: data.data.payment_url ?? null,
+    providerTxId: data.data.payment_token ?? data.data.cpm_trans_id ?? input.reference,
+    paymentUrl: data.data.payment_url,
     success: true,
   };
 }

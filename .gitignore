@@ -47,3 +47,6 @@ next-env.d.ts
 
 # logs
 server.log
+
+# emails de développement (driver log)
+/data/

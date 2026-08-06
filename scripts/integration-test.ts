@@ -123,8 +123,19 @@ async function main() {
   await prisma.listing.delete({ where: { id: listing.id } });
   await prisma.user.delete({ where: { id: user.id } });
   await prisma.user.delete({ where: { id: other.id } });
-  deleteFile(saved.url);
+  await deleteFile(saved.url);
   console.log("7. Données de test nettoyées ✓");
+
+  // 8. HMAC CinetPay (webhook)
+  const { verifyCinetpayToken } = await import("../src/lib/payments/cinetpay");
+  const { createHmac } = await import("node:crypto");
+  const secret = "test-secret-cinetpay";
+  const payloadValues = ["12345", "1000", "XOF", "123456", "SINGLE"];
+  const token = createHmac("sha256", secret).update(payloadValues.join("")).digest("hex");
+  const valid = verifyCinetpayToken(token, secret, payloadValues);
+  const tampered = verifyCinetpayToken(token, secret, ["12345", "9999", "XOF", "123456", "SINGLE"]);
+  const missing = verifyCinetpayToken(token, "wrong-secret", payloadValues);
+  console.log("8. HMAC CinetPay valide:", valid, "| falsifié refusé:", !tampered, "| mauvais secret refusé:", !missing);
 
   console.log("== TOUS LES TESTS PASSENT ✅ ==");
 }

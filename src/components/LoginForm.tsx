@@ -59,6 +59,14 @@ export function LoginForm() {
           className="w-full rounded-lg border border-ink-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
         />
       </div>
+      <div className="text-right">
+        <Link
+          href="/auth/mot-de-passe-oublie"
+          className="text-xs font-medium text-brand-700 hover:underline"
+        >
+          Mot de passe oublié ?
+        </Link>
+      </div>
       <button
         type="submit"
         disabled={pending}

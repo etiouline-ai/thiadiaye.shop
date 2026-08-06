@@ -148,7 +148,7 @@ export async function updateListing(listingId: string, input: unknown): Promise<
 
   if (images.length > 0) {
     const existing = await prisma.image.findMany({ where: { listingId } });
-    for (const img of existing) deleteFile(img.url);
+    for (const img of existing) await deleteFile(img.url);
     await prisma.image.deleteMany({ where: { listingId } });
     for (let i = 0; i < images.length; i++) {
       const saved = await saveImage(images[i], detectMime(images[i]));
@@ -174,7 +174,7 @@ export async function deleteListing(listingId: string): Promise<ActionResult> {
   }
 
   const images = await prisma.image.findMany({ where: { listingId } });
-  for (const img of images) deleteFile(img.url);
+  for (const img of images) await deleteFile(img.url);
   await prisma.listing.delete({ where: { id: listingId } });
 
   revalidatePath("/annonces");

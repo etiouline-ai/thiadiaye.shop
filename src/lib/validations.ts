@@ -29,6 +29,18 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Mot de passe requis"),
 });
 
+export const resetPasswordSchema = z.object({
+  token: z.string().min(1, "Jeton invalide"),
+  password: z
+    .string()
+    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
+    .max(100, "Mot de passe trop long"),
+});
+
+export const requestResetSchema = z.object({
+  email: z.string().trim().toLowerCase().email("Adresse email invalide"),
+});
+
 export const listingSchema = z.object({
   title: z
     .string()
