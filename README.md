@@ -11,6 +11,7 @@ Portail d'annonces locales du Sénégal (modèle Expat-Dakar) : mise en relation
 - Mise à la une payante : Orange Money / Wave / Free Money (CinetPay en production, mode `mock` en local)
 - Comptes utilisateurs (JWT httpOnly) et administration avec modération des annonces
 - Confirmation d'email et réinitialisation de mot de passe (SMTP ou log local)
+- Publicité Google AdSense (bannières configurable, désactivée si aucune variable)
 - Pages légales : CGU, confidentialité, mentions légales
 
 ## Stack
@@ -98,6 +99,8 @@ Créer l'extension sur la base distante : `CREATE EXTENSION IF NOT EXISTS unacce
 | `CINETPAY_SECRET_KEY` | Clé secrète pour vérifier le webhook (`x-token` HMAC) |
 | `EMAIL_DRIVER` | `log` (écrit dans `data/emails/`) ou `smtp` |
 | `EMAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | Envoi réel d'emails |
+| `NEXT_PUBLIC_ADSENSE_CLIENT_ID` | ID éditeur AdSense (`ca-pub-…`) — vide = publicité désactivée |
+| `NEXT_PUBLIC_ADSENSE_SLOT_HOME`, `…_LIST`, `…_DETAIL` | Identifiants des blocs d'annonces (créés dans AdSense) |
 | `STORAGE_DRIVER` | `local` ou `s3` |
 | `S3_ENDPOINT`, `S3_BUCKET`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` | Stockage compatible S3 (R2, MinIO, Backblaze…) |
 

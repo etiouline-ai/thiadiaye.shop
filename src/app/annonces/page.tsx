@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { ListingCard } from "@/components/ListingCard";
+import { AdSlot } from "@/components/AdSlot";
 import { NavSelect } from "@/components/NavSelect";
 import { CITIES } from "@/lib/cities";
 import { formatPrice } from "@/lib/format";
+import { adsSlots } from "@/lib/ads";
 
 export const revalidate = 30;
 
@@ -227,6 +229,8 @@ export default async function ListingsPage({
               </button>
             </form>
           </div>
+
+          <AdSlot slot={adsSlots.list} label="Publicité" />
         </aside>
 
         {/* LISTE */}

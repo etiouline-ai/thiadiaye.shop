@@ -7,6 +7,8 @@ import { ImageGallery } from "@/components/ImageGallery";
 import { ViewTracker } from "@/components/ViewTracker";
 import { ListingCard } from "@/components/ListingCard";
 import { DeleteListingButton } from "@/components/DeleteListingButton";
+import { AdSlot } from "@/components/AdSlot";
+import { adsSlots } from "@/lib/ads";
 
 export const revalidate = 30;
 
@@ -208,6 +210,8 @@ export default async function ListingDetailPage({
           )}
         </div>
       </div>
+
+      <AdSlot slot={adsSlots.detail} className="mx-auto mt-8 min-h-24 max-w-3xl" label="Publicité" />
 
       {related.length > 0 && (
         <section className="mt-10">

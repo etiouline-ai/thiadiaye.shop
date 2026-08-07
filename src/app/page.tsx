@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { ListingCard } from "@/components/ListingCard";
+import { AdSlot } from "@/components/AdSlot";
 import { isFeatured } from "@/lib/format";
+import { adsSlots } from "@/lib/ads";
 
 export const revalidate = 60;
 
@@ -134,6 +136,11 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* PUBLICITÉ */}
+      <div className="mx-auto max-w-6xl px-4 py-6">
+        <AdSlot slot={adsSlots.home} className="mx-auto min-h-24 max-w-3xl" label="Publicité" />
+      </div>
 
       {/* FEATURED */}
       {featured.length > 0 && (

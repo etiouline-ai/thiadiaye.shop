@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { adsClientId } from "@/lib/ads";
 
 export const metadata: Metadata = {
   title: {
@@ -42,6 +43,15 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fr" className="h-full">
+      <head>
+        {adsClientId && (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsClientId}`}
+            crossOrigin="anonymous"
+          />
+        )}
+      </head>
       <body className="flex min-h-full flex-col bg-ink-50">
         <Navbar />
         <main className="flex-1">{children}</main>
