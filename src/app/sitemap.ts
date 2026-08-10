@@ -24,19 +24,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: p === "" ? 1 : p === "/annonces" ? 0.9 : 0.6,
   }));
 
-  const listings = await prisma.listing.findMany({
-    where: { status: "PUBLISHED" },
-    select: { slug: true, updatedAt: true },
-    orderBy: { updatedAt: "desc" },
-    take: 5000,
-  });
+  let listingRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const listings = await prisma.listing.findMany({
+      where: { status: "PUBLISHED" },
+      select: { slug: true, updatedAt: true },
+      orderBy: { updatedAt: "desc" },
+      take: 5000,
+    });
 
-  const listingRoutes = listings.map((l) => ({
-    url: `${base}/annonce/${l.slug}`,
-    lastModified: l.updatedAt,
-    changeFrequency: "daily" as const,
-    priority: 0.8,
-  }));
+    listingRoutes = listings.map((l) => ({
+      url: `${base}/annonce/${l.slug}`,
+      lastModified: l.updatedAt,
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    }));
+  } catch {
+    // base de données indisponible au build : publier uniquement les routes statiques
+  }
 
   return [...staticRoutes, ...listingRoutes];
 }
