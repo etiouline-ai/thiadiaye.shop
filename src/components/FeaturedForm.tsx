@@ -17,7 +17,7 @@ export function FeaturedForm({ listingId }: { listingId: string }) {
   return (
     <div className="mt-4 rounded-lg border border-sun-200 bg-sun-50 p-4">
       <p className="mb-3 text-sm font-bold text-ink-800">
-        ⭐ Mettre cette annonce en avant
+        <span className="text-lg">⭐</span> Mettre cette annonce en avant
       </p>
       <div className="mb-3 flex gap-2">
         {PAYMENT_METHODS.map((m) => (
@@ -50,7 +50,7 @@ export function FeaturedForm({ listingId }: { listingId: string }) {
         />
       </div>
       {error && (
-        <p className="mb-2 text-sm font-medium text-red-600">⚠️ {error}</p>
+        <p className="mb-2 text-sm font-medium text-red-600"><span className="text-base">⚠️</span> {error}</p>
       )}
       <button
         onClick={() =>

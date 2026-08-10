@@ -84,7 +84,7 @@ export function ListingForm({ categories, edit }: ListingFormProps) {
     >
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-          ⚠️ {error}
+          <span className="text-base">⚠️</span> {error}
         </div>
       )}
 
@@ -252,7 +252,7 @@ export function ListingForm({ categories, edit }: ListingFormProps) {
               <button
                 type="button"
                 onClick={() => removeImage(i)}
-                className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white"
+                className="absolute right-0.5 top-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white"
               >
                 ✕
               </button>

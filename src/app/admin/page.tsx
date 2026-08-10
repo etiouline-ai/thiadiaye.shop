@@ -63,7 +63,7 @@ export default async function AdminPage() {
         Annonces à modérer ({pending.length})
       </h2>
       {pending.length === 0 ? (
-        <p className="text-sm text-ink-500">Rien à modérer 🎉</p>
+        <p className="text-sm text-ink-500">Rien à modérer <span className="text-base">🎉</span></p>
       ) : (
         <div className="space-y-3">
           {pending.map((listing) => (
@@ -80,7 +80,7 @@ export default async function AdminPage() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-xl">
+                  <div className="flex h-full w-full items-center justify-center text-2xl">
                     🛒
                   </div>
                 )}

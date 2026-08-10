@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { ListingCard } from "@/components/ListingCard";
 import { AdSlot } from "@/components/AdSlot";
+import { HeroSlider } from "@/components/HeroSlider";
 import { isFeatured } from "@/lib/format";
 import { adsSlots } from "@/lib/ads";
 
@@ -68,8 +69,9 @@ export default async function HomePage() {
   return (
     <div>
       {/* HERO */}
-      <section className="bg-gradient-to-b from-brand-800 to-brand-700 text-white">
-        <div className="mx-auto max-w-6xl px-4 py-12 text-center">
+      <section className="relative overflow-hidden bg-gradient-to-b from-brand-800 to-brand-700 text-white">
+        <HeroSlider />
+        <div className="relative mx-auto max-w-6xl px-4 py-12 text-center">
           <h1 className="mx-auto max-w-2xl text-3xl font-extrabold leading-tight sm:text-4xl">
             Tout acheter, tout vendre,{" "}
             <span className="text-sun-400">près de chez vous</span>
@@ -101,7 +103,7 @@ export default async function HomePage() {
             href="/annonces/nouvelles"
             className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-5 py-2.5 text-sm font-semibold ring-1 ring-white/30 transition hover:bg-white/20"
           >
-            ➕ Publier une annonce gratuite
+            <span className="text-xl">➕</span> Publier une annonce gratuite
           </Link>
         </div>
       </section>
@@ -124,8 +126,8 @@ export default async function HomePage() {
               href={`/annonces?category=${cat.slug}`}
               className="flex flex-col items-center gap-1 rounded-xl border border-ink-200 bg-white p-4 text-center shadow-sm transition hover:border-brand-400 hover:shadow"
             >
-              <span className="text-3xl">{cat.icon ?? "📦"}</span>
-              <span className="text-sm font-semibold text-ink-800">
+              <span className="text-5xl">{cat.icon ?? "📦"}</span>
+              <span className="text-sm font-bold text-ink-800">
                 {cat.name}
               </span>
               <span className="text-xs text-ink-400">
@@ -147,7 +149,7 @@ export default async function HomePage() {
         <section className="mx-auto max-w-6xl px-4 py-6">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-bold text-ink-900">
-              ⭐ Annonces à la une
+              <span className="align-middle text-2xl">⭐</span> Annonces à la une
             </h2>
             <Link
               href="/annonces"

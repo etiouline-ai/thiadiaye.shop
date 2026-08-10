@@ -32,7 +32,7 @@ export function MockConfirmPayment({ paymentId }: { paymentId: string }) {
   return (
     <div className="space-y-2">
       {error && (
-        <p className="text-sm font-medium text-red-600">⚠️ {error}</p>
+        <p className="text-sm font-medium text-red-600"><span className="text-base">⚠️</span> {error}</p>
       )}
       <button
         onClick={() => confirm(true)}

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { LogoutButton } from "@/components/LogoutButton";
+import { MobileMenu } from "@/components/MobileMenu";
 
 export async function Navbar() {
   const [categories, session] = await Promise.all([
@@ -18,7 +19,7 @@ export async function Navbar() {
       <div className="bg-brand-800 text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-1.5 text-xs">
           <span className="font-medium">
-            📍 Thiadiaye &amp; tout le Sénégal — publiez gratuitement
+            <span className="text-base">📍</span> Thiadiaye &amp; tout le Sénégal — publiez gratuitement
           </span>
           <div className="hidden items-center gap-4 sm:flex">
             <Link href="/a-propos" className="hover:underline">
@@ -72,7 +73,7 @@ export async function Navbar() {
                 + Publier une annonce
               </Link>
               {session ? (
-                <div className="flex items-center gap-2">
+                <div className="hidden items-center gap-2 sm:flex">
                   <Link
                     href="/compte"
                     className="rounded-lg border border-ink-300 px-4 py-2.5 text-sm font-semibold text-ink-700 transition hover:bg-ink-100"
@@ -84,11 +85,12 @@ export async function Navbar() {
               ) : (
                 <Link
                   href="/auth/login"
-                  className="rounded-lg border border-ink-300 px-4 py-2.5 text-sm font-semibold text-ink-700 transition hover:bg-ink-100"
+                  className="hidden rounded-lg border border-ink-300 px-4 py-2.5 text-sm font-semibold text-ink-700 transition hover:bg-ink-100 sm:block"
                 >
                   Connexion
                 </Link>
               )}
+              <MobileMenu session={session} />
             </div>
           </div>
 
@@ -129,7 +131,7 @@ export async function Navbar() {
               href={`/annonces?category=${cat.slug}`}
               className="whitespace-nowrap px-3 py-2.5 text-ink-600 transition hover:bg-ink-50 hover:text-brand-700"
             >
-              {cat.icon && <span className="mr-1">{cat.icon}</span>}
+              {cat.icon && <span className="mr-1 text-base">{cat.icon}</span>}
               {cat.name}
             </Link>
           ))}

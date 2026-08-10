@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { ListingCard } from "@/components/ListingCard";
 import { AdSlot } from "@/components/AdSlot";
 import { NavSelect } from "@/components/NavSelect";
+import { CollapsibleFilters } from "@/components/CollapsibleFilters";
 import { CITIES } from "@/lib/cities";
 import { formatPrice } from "@/lib/format";
 import { adsSlots } from "@/lib/ads";
@@ -137,7 +138,8 @@ export default async function ListingsPage({
 
       <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
         {/* FILTRES */}
-        <aside className="h-fit space-y-5 rounded-xl border border-ink-200 bg-white p-4 lg:sticky lg:top-32">
+        <CollapsibleFilters>
+          <aside className="h-fit space-y-5 rounded-xl border border-ink-200 bg-white p-4 lg:sticky lg:top-32">
           <div>
             <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-ink-600">
               Catégories
@@ -146,7 +148,7 @@ export default async function ListingsPage({
               <li>
                 <Link
                   href={href({ category: undefined, page: undefined })}
-                  className={`block rounded px-2 py-1 text-sm ${!categorySlug ? "bg-brand-50 font-semibold text-brand-700" : "text-ink-600 hover:bg-ink-50"}`}
+                  className={`block rounded px-2 py-1 text-sm ${!categorySlug ? "bg-brand-50 font-semibold text-brand-700" : "font-semibold text-ink-600 hover:bg-ink-50"}`}
                 >
                   Toutes
                 </Link>
@@ -155,7 +157,7 @@ export default async function ListingsPage({
                 <li key={cat.slug}>
                   <Link
                     href={href({ category: cat.slug, page: undefined })}
-                    className={`block rounded px-2 py-1 text-sm ${categorySlug === cat.slug ? "bg-brand-50 font-semibold text-brand-700" : "text-ink-600 hover:bg-ink-50"}`}
+                    className={`block rounded px-2 py-1 text-sm ${categorySlug === cat.slug ? "bg-brand-50 font-semibold text-brand-700" : "font-semibold text-ink-600 hover:bg-ink-50"}`}
                   >
                     {cat.icon && <span className="mr-1">{cat.icon}</span>}
                     {cat.name}
@@ -231,7 +233,8 @@ export default async function ListingsPage({
           </div>
 
           <AdSlot slot={adsSlots.list} label="Publicité" />
-        </aside>
+          </aside>
+        </CollapsibleFilters>
 
         {/* LISTE */}
         <div>
@@ -251,7 +254,7 @@ export default async function ListingsPage({
                   href="/annonces"
                   className="rounded-lg border border-ink-300 px-3 py-2 font-medium text-ink-500 hover:bg-ink-50"
                 >
-                  ✕ Réinitialiser
+                  <span className="text-base">✕</span> Réinitialiser
                 </Link>
               )}
             </div>
@@ -286,7 +289,7 @@ export default async function ListingsPage({
                   href={href({ page: String(page - 1) })}
                   className="rounded-lg border border-ink-300 bg-white px-4 py-2 text-sm font-medium hover:bg-ink-50"
                 >
-                  ← Précédent
+                  <span className="text-base">←</span> Précédent
                 </Link>
               )}
               <span className="px-2 text-sm text-ink-500">
@@ -297,7 +300,7 @@ export default async function ListingsPage({
                   href={href({ page: String(page + 1) })}
                   className="rounded-lg border border-ink-300 bg-white px-4 py-2 text-sm font-medium hover:bg-ink-50"
                 >
-                  Suivant →
+                  Suivant <span className="text-base">→</span>
                 </Link>
               )}
             </div>

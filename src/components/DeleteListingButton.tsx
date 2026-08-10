@@ -27,7 +27,11 @@ export function DeleteListingButton({
       disabled={pending}
       className="flex-1 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-center text-sm font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
     >
-      {pending ? "…" : "🗑 Supprimer"}
+      {pending ? "…" : (
+        <span>
+          <span className="text-base">🗑</span> Supprimer
+        </span>
+      )}
     </button>
   );
 }

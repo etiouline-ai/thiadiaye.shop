@@ -23,14 +23,14 @@ export function AdminActions({ listingId }: { listingId: string }) {
         disabled={pending}
         className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
       >
-        ✓ Publier
+        <span className="text-base">✓</span> Publier
       </button>
       <button
         onClick={() => setStatus("REJECTED")}
         disabled={pending}
         className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
       >
-        ✕ Refuser
+        <span className="text-base">✕</span> Refuser
       </button>
     </div>
   );

@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
-      <div className="text-6xl">🔍</div>
+      <div className="text-7xl">🔍</div>
       <h1 className="mt-4 text-2xl font-bold text-ink-900">
         Page introuvable
       </h1>

@@ -113,7 +113,7 @@ export default async function ListingDetailPage({
             <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
               {featured && listing.status === "PUBLISHED" && (
                 <span className="rounded-full bg-sun-500 px-2.5 py-1 text-xs font-bold text-ink-900">
-                  ⭐ À la une
+                  <span className="text-sm">⭐</span> À la une
                 </span>
               )}
               {listing.status === "SOLD" && (
@@ -125,10 +125,10 @@ export default async function ListingDetailPage({
                 {listing.condition === "NEW" ? "Neuf" : "D'occasion"}
               </span>
               <span className="rounded-full bg-ink-100 px-2.5 py-1 text-xs font-medium text-ink-600">
-                📅 {formatDate(listing.createdAt)}
+                <span className="text-sm">📅</span> {formatDate(listing.createdAt)}
               </span>
               <span className="rounded-full bg-ink-100 px-2.5 py-1 text-xs font-medium text-ink-600">
-                👁 {listing.views} vues
+                <span className="text-sm">👁</span> {listing.views} vues
               </span>
             </div>
 
@@ -136,7 +136,7 @@ export default async function ListingDetailPage({
               {formatPrice(listing.price)}
             </div>
             <div className="mt-1 text-sm text-ink-500">
-              📍 {listing.city ?? "Sénégal"}
+              <span className="text-base">📍</span> {listing.city ?? "Sénégal"}
               {listing.district ? `, ${listing.district}` : ""}
             </div>
           </div>
@@ -166,7 +166,7 @@ export default async function ListingDetailPage({
                 href={`tel:${listing.phone}`}
                 className="mb-2 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-brand-700"
               >
-                📞 Appeler : {listing.phone}
+                <span className="text-base">📞</span> Appeler : {listing.phone}
               </a>
             )}
             {whatsapp && (
@@ -176,13 +176,13 @@ export default async function ListingDetailPage({
                 rel="noopener noreferrer"
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-3 text-sm font-bold text-white transition hover:opacity-90"
               >
-                💬 Contacter sur WhatsApp
+                <span className="text-base">💬</span> Contacter sur WhatsApp
               </a>
             )}
 
             {listing.status === "PUBLISHED" && (
               <p className="mt-3 text-center text-xs text-ink-400">
-                🔒 Ne payez jamais à l'avance. Rencontrez le vendeur dans un
+                <span className="text-base">🔒</span> Ne payez jamais à l'avance. Rencontrez le vendeur dans un
                 lieu sûr.
               </p>
             )}
@@ -194,13 +194,13 @@ export default async function ListingDetailPage({
                 href={`/annonce/${listing.slug}/modifier`}
                 className="flex-1 rounded-lg border border-ink-300 bg-white px-4 py-2.5 text-center text-sm font-semibold text-ink-700 hover:bg-ink-50"
               >
-                ✏️ Modifier
+                <span className="text-base">✏️</span> Modifier
               </Link>
               <Link
                 href={`/compte`}
                 className="flex-1 rounded-lg border border-ink-300 bg-white px-4 py-2.5 text-center text-sm font-semibold text-ink-700 hover:bg-ink-50"
               >
-                ⭐ Mettre en avant
+                <span className="text-base">⭐</span> Mettre en avant
               </Link>
               <DeleteListingButton
                 listingId={listing.id}

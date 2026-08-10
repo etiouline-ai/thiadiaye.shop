@@ -37,8 +37,10 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
     "prisma": "^6.19.3",
+    "puppeteer-core": "^25.5.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.9",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vercel": "^58.7.1"
   }
 }

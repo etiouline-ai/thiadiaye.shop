@@ -36,7 +36,7 @@ export function ListingCard({ listing }: { listing: ListingWithImages }) {
             className="object-cover transition duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-5xl">
+          <div className="flex h-full w-full items-center justify-center text-6xl">
             🛒
           </div>
         )}
@@ -49,7 +49,7 @@ export function ListingCard({ listing }: { listing: ListingWithImages }) {
         )}
         {featured && listing.status === "PUBLISHED" && (
           <span className="absolute left-2 top-2 rounded-full bg-sun-500 px-2.5 py-1 text-xs font-bold text-ink-900 shadow">
-            ⭐ À la une
+            <span className="text-sm">⭐</span> À la une
           </span>
         )}
       </div>
@@ -63,7 +63,11 @@ export function ListingCard({ listing }: { listing: ListingWithImages }) {
         </h3>
         <div className="mt-auto flex items-center justify-between gap-2 pt-1 text-xs text-ink-400">
           <span className="line-clamp-1">
-            {listing.city ? `📍 ${listing.city}` : ""}
+            {listing.city ? (
+              <span>
+                <span className="text-sm">📍</span> {listing.city}
+              </span>
+            ) : ""}
             {listing.district ? `, ${listing.district}` : ""}
           </span>
           <span className="shrink-0">{timeAgo(listing.createdAt)}</span>

@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { headers } from "next/headers";
 import {
   createSession,
   setSessionCookie,
@@ -26,6 +27,13 @@ import {
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
+async function clientIp(): Promise<string> {
+  const h = await headers();
+  const xff = h.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0]?.trim() || "unknown";
+  return h.get("x-real-ip") ?? "unknown";
+}
+
 export type ActionResult = { error?: string; success?: boolean };
 
 function emailLayout(title: string, content: string): string {
@@ -37,6 +45,12 @@ function emailLayout(title: string, content: string): string {
 }
 
 export async function registerUser(input: unknown): Promise<ActionResult> {
+  const ip = await clientIp();
+  const rl = rateLimit(`register:${ip}`, 5, 60_000);
+  if (!rl.ok) {
+    return { error: `Trop de tentatives. Réessayez dans ${rl.retryAfter}s` };
+  }
+
   const parsed = registerSchema.safeParse(input);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Données invalides" };
@@ -92,6 +106,12 @@ export async function verifyEmailAction(token: string): Promise<ActionResult> {
 }
 
 export async function requestPasswordResetAction(input: unknown): Promise<ActionResult> {
+  const ip = await clientIp();
+  const rl = rateLimit(`reset:${ip}`, 3, 60_000);
+  if (!rl.ok) {
+    return { error: `Trop de demandes. Réessayez dans ${rl.retryAfter}s` };
+  }
+
   const parsed = requestResetSchema.safeParse(input);
   if (!parsed.success) return { error: "Adresse email invalide" };
   const { email } = parsed.data;
@@ -140,7 +160,7 @@ export async function loginUser(input: unknown): Promise<ActionResult> {
   }
   const data = parsed.data;
 
-  const ip = "auth";
+  const ip = await clientIp();
   const rl = rateLimit(`login:${data.email}:${ip}`, 10, 60_000);
   if (!rl.ok) {
     return { error: `Trop de tentatives. Réessayez dans ${rl.retryAfter}s` };

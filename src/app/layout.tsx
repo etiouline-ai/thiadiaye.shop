@@ -1,8 +1,15 @@
 import type { Metadata, Viewport } from "next";
+import { EB_Garamond } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { adsClientId } from "@/lib/ads";
+
+const garamond = EB_Garamond({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-garamond",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -42,15 +49,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className="h-full">
+    <html lang="fr" className={`${garamond.variable} h-full`}>
       <head>
-        {adsClientId && (
+        {adsClientId ? (
           <script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsClientId}`}
             crossOrigin="anonymous"
           />
-        )}
+        ) : null}
       </head>
       <body className="flex min-h-full flex-col bg-ink-50">
         <Navbar />

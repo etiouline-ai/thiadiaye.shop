@@ -117,7 +117,7 @@ export default async function AccountPage() {
                       <span>· {listing.views} vues</span>
                       {featured && (
                         <span className="rounded-full bg-sun-200 px-2 py-0.5 font-semibold text-ink-800">
-                          ⭐ À la une
+                          <span className="text-sm">⭐</span> À la une
                         </span>
                       )}
                     </div>
@@ -132,7 +132,7 @@ export default async function AccountPage() {
                     href={`/annonce/${listing.slug}/modifier`}
                     className="rounded-lg border border-ink-300 px-3 py-2 text-sm font-medium text-ink-600 hover:bg-ink-50"
                   >
-                    ✏️
+                    <span className="text-lg">✏️</span>
                   </Link>
                   <DeleteListingButton
                     listingId={listing.id}

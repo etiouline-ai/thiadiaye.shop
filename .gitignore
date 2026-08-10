@@ -48,6 +48,10 @@ next-env.d.ts
 
 # logs
 server.log
+server-3001.log
+
+# captures d'écran d'aperçu
+/apercu-mobile/
 
 # emails de développement (driver log)
 /data/

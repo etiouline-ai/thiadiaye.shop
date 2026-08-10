@@ -3,7 +3,10 @@ import { SignJWT, jwtVerify } from "jose";
 import { prisma } from "@/lib/db";
 import type { Role } from "@prisma/client";
 
-const JWT_SECRET = process.env.JWT_SECRET ?? "dev-secret-do-not-use";
+if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET manquant en production");
+}
+const JWT_SECRET = process.env.JWT_SECRET ?? "dev-secret-local-only";
 const COOKIE_NAME = "ts_session";
 const SESSION_DAYS = 7;
 
