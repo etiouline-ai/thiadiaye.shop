@@ -38,6 +38,7 @@ enum PaymentProvider {
   MOCK
   CINETPAY
   PAYDUNYA
+  PAYTECH
 }
 
 enum PaymentStatus {
@@ -66,8 +67,12 @@ model User {
   updatedAt     DateTime  @updatedAt
   listings      Listing[]
   payments      Payment[]
+  shop          Shop?
   emailVerifications EmailVerificationToken[]
   passwordResets     PasswordResetToken[]
+  sentMessages  Message[]
+  conversationsAsBuyer  Conversation[] @relation("ConversationBuyer")
+  conversationsAsSeller Conversation[] @relation("ConversationSeller")
 }
 
 model EmailVerificationToken {
@@ -106,6 +111,29 @@ model Category {
   createdAt   DateTime   @default(now())
 }
 
+model Shop {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  logoUrl     String?
+  bannerUrl   String?
+  city        String?
+  phone       String?
+  whatsapp    String?
+  website     String?
+  facebook    String?
+  instagram   String?
+  status      String    @default("PENDING")
+  ownerId     String    @unique
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  payments    Payment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([ownerId])
+}
+
 model Listing {
   id             String        @id @default(cuid())
   slug           String        @unique
@@ -129,6 +157,7 @@ model Listing {
   category       Category      @relation(fields: [categoryId], references: [id])
   images         Image[]
   payments       Payment[]
+  conversations  Conversation[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
@@ -137,6 +166,40 @@ model Listing {
   @@index([createdAt])
   @@index([featuredUntil])
   @@index([city])
+}
+
+model Conversation {
+  id                 String    @id @default(cuid())
+  listingId          String
+  listing            Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  buyerId            String
+  buyer              User      @relation("ConversationBuyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  sellerId           String
+  seller             User      @relation("ConversationSeller", fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerPhoneRevealed Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  messages           Message[]
+
+  @@unique([listingId, buyerId])
+  @@index([sellerId])
+  @@index([buyerId])
+  @@index([listingId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  body           String
+  imageUrl       String?
+  seenByBuyer    Boolean      @default(false)
+  seenBySeller   Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
 }
 
 model Image {
@@ -153,6 +216,8 @@ model Payment {
   id           String          @id @default(cuid())
   listingId    String?
   listing      Listing?        @relation(fields: [listingId], references: [id])
+  shopId       String?
+  shop         Shop?           @relation(fields: [shopId], references: [id], onDelete: SetNull)
   userId       String
   user         User            @relation(fields: [userId], references: [id])
   amount       Int
@@ -169,4 +234,5 @@ model Payment {
   @@index([userId])
   @@index([status])
   @@index([listingId])
+  @@index([shopId])
 }

@@ -5,7 +5,9 @@ import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { listingSchema } from "@/lib/validations";
 import { saveImage, deleteFile } from "@/lib/storage";
+import type { SavedImage } from "@/lib/storage";
 import { slugify } from "@/lib/slug";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 import type { ListingStatus } from "@prisma/client";
 
 const MAX_IMAGES = Number(process.env.MAX_IMAGES_PER_LISTING ?? 5);
@@ -35,6 +37,12 @@ export async function createListing(input: unknown): Promise<ListingActionResult
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
   if (!dbUser) return { error: "Utilisateur introuvable" };
 
+  const ip = await clientIp();
+  const rl = rateLimit(`createListing:${ip}`, 5, 60_000);
+  if (!rl.ok) {
+    return { error: `Trop de publications. Réessayez dans ${rl.retryAfter}s` };
+  }
+
   const formData = input as FormData;
   const raw = Object.fromEntries(formData.entries());
   const parsed = listingSchema.safeParse(raw);
@@ -59,34 +67,57 @@ export async function createListing(input: unknown): Promise<ListingActionResult
   const phone = data.phone || dbUser.phone || null;
   if (!phone) return { error: "Un numéro de téléphone est requis pour être contacté" };
 
-  const listing = await prisma.listing.create({
-    data: {
-      slug,
-      title: data.title,
-      description: data.description,
-      price: data.price,
-      condition: data.condition,
-      city: data.city,
-      district: data.district || null,
-      phone,
-      whatsapp: data.whatsapp || null,
-      status: "PENDING",
-      sellerId: user.id,
-      categoryId: category.id,
-    },
-  });
-
-  for (let i = 0; i < images.length; i++) {
-    const saved = await saveImage(images[i], images[i].length > 0 ? detectMime(images[i]) : "image/jpeg");
-    await prisma.image.create({
-      data: { listingId: listing.id, url: saved.url, position: i },
-    });
+  const savedImages: SavedImage[] = [];
+  try {
+    for (const buffer of images) {
+      savedImages.push(await saveImage(buffer, detectMime(buffer)));
+    }
+  } catch (e) {
+    for (const img of savedImages) {
+      try {
+        await deleteFile(img.url);
+      } catch {
+        // nettoyage best effort
+      }
+    }
+    return { error: (e as Error).message };
   }
 
-  revalidatePath("/");
-  revalidatePath("/annonces");
-  revalidatePath("/compte");
-  return { listingId: listing.id };
+  try {
+    const listing = await prisma.listing.create({
+      data: {
+        slug,
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        condition: data.condition,
+        city: data.city,
+        district: data.district || null,
+        phone,
+        whatsapp: data.whatsapp || null,
+        status: "PENDING",
+        sellerId: user.id,
+        categoryId: category.id,
+        images: {
+          create: savedImages.map((img, i) => ({ url: img.url, position: i })),
+        },
+      },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/annonces");
+    revalidatePath("/compte");
+    return { listingId: listing.id };
+  } catch (e) {
+    for (const img of savedImages) {
+      try {
+        await deleteFile(img.url);
+      } catch {
+        // nettoyage best effort
+      }
+    }
+    return { error: (e as Error).message };
+  }
 }
 
 function detectMime(buffer: Buffer): string {
@@ -101,6 +132,12 @@ export async function updateListing(listingId: string, input: unknown): Promise<
   if (!user) return { error: "Connectez-vous" };
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
   if (!dbUser) return { error: "Utilisateur introuvable" };
+
+  const ip = await clientIp();
+  const rl = rateLimit(`updateListing:${ip}`, 10, 60_000);
+  if (!rl.ok) {
+    return { error: `Trop de modifications. Réessayez dans ${rl.retryAfter}s` };
+  }
 
   const listing = await prisma.listing.findUnique({ where: { id: listingId } });
   if (!listing || listing.sellerId !== user.id) {
@@ -147,14 +184,50 @@ export async function updateListing(listingId: string, input: unknown): Promise<
   });
 
   if (images.length > 0) {
+    const savedImages: SavedImage[] = [];
+    try {
+      for (const buffer of images) {
+        savedImages.push(await saveImage(buffer, detectMime(buffer)));
+      }
+    } catch (e) {
+      for (const img of savedImages) {
+        try {
+          await deleteFile(img.url);
+        } catch {
+          // nettoyage best effort
+        }
+      }
+      return { error: (e as Error).message };
+    }
+
     const existing = await prisma.image.findMany({ where: { listingId } });
-    for (const img of existing) await deleteFile(img.url);
-    await prisma.image.deleteMany({ where: { listingId } });
-    for (let i = 0; i < images.length; i++) {
-      const saved = await saveImage(images[i], detectMime(images[i]));
-      await prisma.image.create({
-        data: { listingId, url: saved.url, position: i },
+
+    try {
+      await prisma.$transaction(async (tx) => {
+        await tx.image.deleteMany({ where: { listingId } });
+        for (let i = 0; i < savedImages.length; i++) {
+          await tx.image.create({
+            data: { listingId, url: savedImages[i].url, position: i },
+          });
+        }
       });
+    } catch (e) {
+      for (const img of savedImages) {
+        try {
+          await deleteFile(img.url);
+        } catch {
+          // nettoyage best effort
+        }
+      }
+      return { error: (e as Error).message };
+    }
+
+    for (const img of existing) {
+      try {
+        await deleteFile(img.url);
+      } catch {
+        // les fichiers supprimés n'existent plus
+      }
     }
   }
 

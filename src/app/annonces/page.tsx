@@ -34,7 +34,8 @@ export default async function ListingsPage({
   const min = params.min ? Number(params.min) : undefined;
   const max = params.max ? Number(params.max) : undefined;
   const sort = params.sort ?? "newest";
-  const page = Math.max(1, Number(params.page ?? 1));
+  const rawPage = Number(params.page ?? 1);
+  const page = Number.isInteger(rawPage) && rawPage > 0 ? rawPage : 1;
 
   const categories = await prisma.category.findMany({
     where: { parentId: null },

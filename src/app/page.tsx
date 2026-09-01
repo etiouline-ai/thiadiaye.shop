@@ -69,14 +69,25 @@ export default async function HomePage() {
   return (
     <div>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-brand-800 to-brand-700 text-white">
+      <section className="relative isolate overflow-hidden bg-gradient-to-br from-brand-900 via-brand-800 to-emerald-700 text-white">
         <HeroSlider />
-        <div className="relative mx-auto max-w-6xl px-4 py-12 text-center">
-          <h1 className="mx-auto max-w-2xl text-3xl font-extrabold leading-tight sm:text-4xl">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-32 -right-16 h-96 w-96 rounded-full bg-sun-500/20 blur-3xl"
+        />
+        <div className="relative mx-auto max-w-6xl px-4 py-14 text-center sm:py-20">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider ring-1 ring-white/20 backdrop-blur">
+            🇸🇳 Thiadiaye &amp; tout le Sénégal
+          </span>
+          <h1 className="mx-auto mt-5 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">
             Tout acheter, tout vendre,{" "}
             <span className="text-sun-400">près de chez vous</span>
           </h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-brand-100">
+          <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-brand-100 sm:text-lg">
             Annonces locales de Thiadiaye, Mbour et de tout le Sénégal.
             Publication gratuite, contact direct, paiement sécurisé par mobile
             money.
@@ -84,53 +95,80 @@ export default async function HomePage() {
           <form
             action="/annonces"
             method="get"
-            className="mx-auto mt-6 flex max-w-2xl overflow-hidden rounded-xl bg-white shadow-lg"
+            className="mx-auto mt-8 flex max-w-2xl items-center gap-1 rounded-full bg-white p-1.5 shadow-2xl shadow-black/30"
           >
+            <span className="pl-4 text-lg" aria-hidden="true">
+              🔍
+            </span>
             <input
               type="search"
               name="q"
               placeholder="Rechercher : voiture, terrain, téléphone, poulets…"
-              className="w-full px-5 py-4 text-ink-800 outline-none"
+              className="w-full bg-transparent px-3 py-2.5 text-sm text-ink-800 outline-none sm:text-base"
             />
             <button
               type="submit"
-              className="bg-sun-500 px-6 text-sm font-bold text-ink-900 transition hover:bg-sun-400"
+              className="shrink-0 rounded-full bg-sun-500 px-5 py-2.5 text-sm font-bold text-ink-900 transition hover:bg-sun-400 sm:px-6"
             >
               Rechercher
             </button>
           </form>
-          <Link
-            href="/annonces/nouvelles"
-            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-5 py-2.5 text-sm font-semibold ring-1 ring-white/30 transition hover:bg-white/20"
-          >
-            <span className="text-xl">➕</span> Publier une annonce gratuite
-          </Link>
+          <div className="mt-4 text-xs text-brand-200 sm:text-sm">
+            Populaire :{" "}
+            {["Voiture", "Terrain", "Poulets", "Téléphone"].map((t) => (
+              <Link
+                key={t}
+                href={`/annonces?q=${t}`}
+                className="mx-0.5 inline-block rounded-full bg-white/10 px-3 py-1 font-medium ring-1 ring-white/20 transition hover:bg-white/20 hover:text-white"
+              >
+                {t}
+              </Link>
+            ))}
+          </div>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/annonces/nouvelles"
+              className="btn-accent w-full sm:w-auto"
+            >
+              ➕ Publier une annonce gratuite
+            </Link>
+            <Link href="/annonces" className="btn-ghost w-full sm:w-auto">
+              Découvrir les annonces
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* CATEGORIES */}
-      <section className="mx-auto max-w-6xl px-4 py-8">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-ink-900">Catégories</h2>
+      <section className="mx-auto max-w-6xl px-4 py-10">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="eyebrow">Parcourir</p>
+            <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-ink-900 sm:text-3xl">
+              Explorer les catégories
+            </h2>
+          </div>
           <Link
             href="/annonces"
-            className="text-sm font-semibold text-brand-700 hover:underline"
+            className="inline-flex items-center gap-1 rounded-full border border-ink-200 px-4 py-2 text-sm font-semibold text-brand-700 transition hover:border-brand-400 hover:bg-brand-50"
           >
             Voir tout →
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {categories.map((cat) => (
             <Link
               key={cat.slug}
               href={`/annonces?category=${cat.slug}`}
-              className="flex flex-col items-center gap-1 rounded-xl border border-ink-200 bg-white p-4 text-center shadow-sm transition hover:border-brand-400 hover:shadow"
+              className="group card card-hover flex flex-col items-center gap-2 p-5 text-center"
             >
-              <span className="text-5xl">{cat.icon ?? "📦"}</span>
-              <span className="text-sm font-bold text-ink-800">
+              <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-50 text-4xl ring-1 ring-brand-100 transition group-hover:scale-110 group-hover:bg-brand-100">
+                {cat.icon ?? "📦"}
+              </span>
+              <span className="text-sm font-bold text-ink-800 transition group-hover:text-brand-700">
                 {cat.name}
               </span>
-              <span className="text-xs text-ink-400">
+              <span className="rounded-full bg-ink-50 px-2.5 py-0.5 text-xs font-medium text-ink-500">
                 {cat._count.listings} annonce
                 {cat._count.listings > 1 ? "s" : ""}
               </span>
@@ -146,14 +184,17 @@ export default async function HomePage() {
 
       {/* FEATURED */}
       {featured.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 py-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-bold text-ink-900">
-              <span className="align-middle text-2xl">⭐</span> Annonces à la une
-            </h2>
+        <section className="mx-auto max-w-6xl px-4 py-8">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="eyebrow">⭐ En avant</p>
+              <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-ink-900 sm:text-3xl">
+                Annonces à la une
+              </h2>
+            </div>
             <Link
               href="/annonces"
-              className="text-sm font-semibold text-brand-700 hover:underline"
+              className="inline-flex items-center gap-1 rounded-full border border-ink-200 px-4 py-2 text-sm font-semibold text-brand-700 transition hover:border-brand-400 hover:bg-brand-50"
             >
               Voir tout →
             </Link>
@@ -167,26 +208,31 @@ export default async function HomePage() {
       )}
 
       {/* RECENT */}
-      <section className="mx-auto max-w-6xl px-4 py-6 pb-12">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-ink-900">Dernières annonces</h2>
+      <section className="mx-auto max-w-6xl px-4 py-8 pb-16">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="eyebrow">Nouveautés</p>
+            <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-ink-900 sm:text-3xl">
+              Dernières annonces
+            </h2>
+          </div>
           <Link
             href="/annonces"
-            className="text-sm font-semibold text-brand-700 hover:underline"
+            className="inline-flex items-center gap-1 rounded-full border border-ink-200 px-4 py-2 text-sm font-semibold text-brand-700 transition hover:border-brand-400 hover:bg-brand-50"
           >
             Voir tout →
           </Link>
         </div>
         {recent.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-ink-300 bg-white p-10 text-center text-ink-500">
-            <p className="text-lg">Aucune annonce pour le moment.</p>
-            <p className="mt-1 text-sm">
+          <div className="card p-10 text-center">
+            <div className="text-5xl">🛍️</div>
+            <p className="mt-3 text-lg font-semibold text-ink-800">
+              Aucune annonce pour le moment.
+            </p>
+            <p className="mt-1 text-sm text-ink-500">
               Soyez le premier à publier une annonce gratuite !
             </p>
-            <Link
-              href="/annonces/nouvelles"
-              className="mt-4 inline-block rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-700"
-            >
+            <Link href="/annonces/nouvelles" className="btn-primary mt-5">
               Publier une annonce
             </Link>
           </div>

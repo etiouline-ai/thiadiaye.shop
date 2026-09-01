@@ -93,8 +93,10 @@ Créer l'extension sur la base distante : `CREATE EXTENSION IF NOT EXISTS unacce
 | `JWT_SECRET` | Secret de signature des sessions (64 octets hex) |
 | `NEXT_PUBLIC_SITE_URL` | URL publique du site (HTTPS) |
 | `MAX_UPLOAD_BYTES`, `MAX_IMAGES_PER_LISTING` | Limites d'upload |
-| `PAYMENT_PROVIDER` | `mock` ou `cinetpay` |
+| `PAYMENT_PROVIDER` | `mock`, `cinetpay`, `paydunya` ou `paytech` |
 | `PAYMENT_MODE` | `sandbox` ou `production` |
+| `PAYTECH_API_KEY`, `PAYTECH_API_SECRET` | Identifiants marchand PayTech (Espace client → Paramètres → API) |
+| `PAYTECH_ENV` | `test` ou `prod` (prod requiert l'activation du compte) |
 | `CINETPAY_API_KEY`, `CINETPAY_SITE_ID` | Identifiants marchand CinetPay |
 | `CINETPAY_SECRET_KEY` | Clé secrète pour vérifier le webhook (`x-token` HMAC) |
 | `EMAIL_DRIVER` | `log` (écrit dans `data/emails/`) ou `smtp` |

@@ -1,6 +1,15 @@
+import { headers } from "next/headers";
+
 type Bucket = { count: number; resetAt: number };
 
 const store = new Map<string, Bucket>();
+
+export async function clientIp(): Promise<string> {
+  const h = await headers();
+  const xff = h.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0]?.trim() || "unknown";
+  return h.get("x-real-ip") ?? "unknown";
+}
 
 export function rateLimit(
   key: string,

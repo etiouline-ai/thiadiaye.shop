@@ -13,7 +13,7 @@ export default async function AccountPage() {
   const session = await getSession();
   if (!session) redirect("/auth/login");
 
-  const [listings, payments] = await Promise.all([
+  const [listings, payments, shop] = await Promise.all([
     prisma.listing.findMany({
       where: { sellerId: session.id },
       orderBy: { createdAt: "desc" },
@@ -27,6 +27,7 @@ export default async function AccountPage() {
       orderBy: { createdAt: "desc" },
       take: 20,
     }),
+    prisma.shop.findUnique({ where: { ownerId: session.id } }),
   ]);
 
   const statusLabels: Record<string, string> = {
@@ -52,6 +53,53 @@ export default async function AccountPage() {
         >
           + Publier une annonce
         </Link>
+      </div>
+
+      <div className="mb-8 rounded-xl border border-ink-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-brand-50 text-2xl ring-1 ring-brand-100">
+              {shop?.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={shop.logoUrl}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                "🏪"
+              )}
+            </div>
+            <div>
+              <div className="font-bold text-ink-900">
+                {shop ? shop.name : "Ma boutique"}
+              </div>
+              <p className="text-sm text-ink-500">
+                {shop
+                  ? shop.status === "ACTIVE"
+                    ? "Votre vitrine publique est en ligne."
+                    : "En attente de paiement — activez-la depuis « Gérer ma boutique »."
+                  : "Ouvrez votre vitrine gratuite et regroupez vos annonces."}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {shop && (
+              <Link
+                href={`/boutique/${shop.slug}`}
+                className="rounded-lg border border-ink-300 px-4 py-2 text-sm font-semibold text-ink-700 transition hover:bg-ink-50"
+              >
+                Voir ma boutique
+              </Link>
+            )}
+            <Link
+              href="/compte/boutique"
+              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-brand-700"
+            >
+              {shop ? "Gérer ma boutique" : "Créer ma boutique"}
+            </Link>
+          </div>
+        </div>
       </div>
 
       <h2 className="mb-3 text-lg font-bold text-ink-900">
@@ -178,7 +226,11 @@ export default async function AccountPage() {
                     {formatDateShort(p.createdAt)}
                   </td>
                   <td className="px-4 py-3">
-                    {p.type === "FEATURED_LISTING" ? "Mise en avant" : "Compte pro"}
+                    {p.type === "FEATURED_LISTING"
+                      ? "Mise en avant"
+                      : p.type === "BUSINESS_PRO"
+                        ? "Création de boutique"
+                        : "Compte pro"}
                   </td>
                   <td className="px-4 py-3">{p.method.replace("_", " ")}</td>
                   <td className="px-4 py-3 font-semibold">

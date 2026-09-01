@@ -280,7 +280,7 @@ export function ListingForm({ categories, edit }: ListingFormProps) {
         />
         {previews.length === 0 && (
           <p className="mt-2 text-xs text-ink-400">
-            JPEG, PNG ou WebP — 2 Mo max par photo, jusqu'à {MAX_IMAGES} photos.
+            JPEG, PNG ou WebP — 5 Mo max par photo, jusqu'à {MAX_IMAGES} photos.
           </p>
         )}
       </div>

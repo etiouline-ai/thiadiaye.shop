@@ -18,13 +18,22 @@ export default async function PaymentPage({
   const { paymentId } = await params;
   const payment = await prisma.payment.findUnique({
     where: { id: paymentId },
-    include: { listing: { select: { title: true, slug: true } } },
+    include: {
+      listing: { select: { title: true, slug: true } },
+      shop: { select: { name: true, slug: true } },
+    },
   });
 
   if (!payment || payment.userId !== session.id) notFound();
 
   const isMock = payment.provider === "MOCK";
   const isPending = payment.status === "PENDING";
+  const isShop = payment.type === "BUSINESS_PRO";
+  const objectLabel = isShop
+    ? "Création de boutique"
+    : (payment.listing?.title ?? "Mise en avant");
+  const paymentUrl =
+    (payment.metadata as { paymentUrl?: string } | null)?.paymentUrl ?? null;
 
   return (
     <div className="mx-auto max-w-md px-4 py-12">
@@ -34,7 +43,7 @@ export default async function PaymentPage({
           <div className="flex justify-between">
             <span>Objet</span>
             <span className="font-medium text-ink-800">
-              {payment.listing?.title ?? "Mise en avant"}
+              {objectLabel}
             </span>
           </div>
           <div className="flex justify-between">
@@ -77,8 +86,18 @@ export default async function PaymentPage({
 
         {payment.status === "SUCCESS" && (
           <div className="mt-5 rounded-lg border border-brand-200 bg-brand-50 p-4 text-sm text-brand-800">
-            ✅ Votre annonce est maintenant mise en avant. Elle apparaît dans la
-            section « À la une ».
+            {isShop ? (
+              <>
+                ✅ Paiement confirmé ! Votre boutique{" "}
+                <strong>{payment.shop?.name}</strong> est maintenant active et
+                visible dans l'annuaire.
+              </>
+            ) : (
+              <>
+                ✅ Votre annonce est maintenant mise en avant. Elle apparaît dans
+                la section « À la une ».
+              </>
+            )}
           </div>
         )}
 
@@ -93,14 +112,34 @@ export default async function PaymentPage({
         )}
 
         {isPending && !isMock && (
-          <div className="mt-5">
+          <div className="mt-5 space-y-3">
+            {paymentUrl && (
+              <a
+                href={paymentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full rounded-lg bg-sun-500 px-4 py-2.5 text-center text-sm font-bold text-ink-900 transition hover:bg-sun-400"
+              >
+                💳 Poursuivre le paiement
+              </a>
+            )}
             <div className="rounded-lg bg-ink-50 p-3 text-sm text-ink-600">
-              💳 Vérifiez votre téléphone : vous recevrez une demande de
-              confirmation {payment.method.replace("_", " ")}. Validez-la pour
-              finaliser le paiement.
+              {payment.provider === "PAYTECH" ? (
+                <>
+                  🔒 Vous êtes redirigé vers PayTech pour finaliser votre
+                  paiement. Après validation, cette page se met à jour
+                  automatiquement.
+                </>
+              ) : (
+                <>
+                  💳 Vérifiez votre téléphone : vous recevrez une demande de
+                  confirmation {payment.method.replace("_", " ")}. Validez-la
+                  pour finaliser le paiement.
+                </>
+              )}
             </div>
             {payment.providerTxId && (
-              <p className="mt-2 text-xs text-ink-400">
+              <p className="text-xs text-ink-400">
                 Numéro de transaction : {payment.providerTxId}
               </p>
             )}

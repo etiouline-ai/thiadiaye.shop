@@ -37,14 +37,30 @@ export function MobileMenu({ session }: { session: SessionUser | null }) {
             >
               Toutes les annonces
             </Link>
+            <Link
+              href="/boutiques"
+              onClick={close}
+              className="block rounded-lg px-3 py-2.5 font-semibold text-ink-800 hover:bg-ink-50"
+            >
+              🏪 Boutiques
+            </Link>
             {session ? (
-              <Link
-                href="/compte"
-                onClick={close}
-                className="block rounded-lg px-3 py-2.5 font-semibold text-ink-800 hover:bg-ink-50"
-              >
-                Mon compte
-              </Link>
+              <>
+                <Link
+                  href="/compte/messages"
+                  onClick={close}
+                  className="block rounded-lg px-3 py-2.5 font-semibold text-ink-800 hover:bg-ink-50"
+                >
+                  💬 Messages
+                </Link>
+                <Link
+                  href="/compte"
+                  onClick={close}
+                  className="block rounded-lg px-3 py-2.5 font-semibold text-ink-800 hover:bg-ink-50"
+                >
+                  Mon compte
+                </Link>
+              </>
             ) : (
               <Link
                 href="/auth/login"

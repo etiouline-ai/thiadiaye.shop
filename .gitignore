@@ -49,6 +49,8 @@ next-env.d.ts
 # logs
 server.log
 server-3001.log
+server.err.log
+server-3001.err.log
 
 # captures d'écran d'aperçu
 /apercu-mobile/

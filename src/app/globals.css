@@ -28,6 +28,11 @@
   --color-ink-700: #374151;
   --color-ink-800: #1f2937;
   --color-ink-900: #111827;
+
+  --shadow-card: 0 1px 2px rgb(17 24 39 / 0.04),
+    0 8px 24px -12px rgb(17 24 39 / 0.12);
+  --shadow-card-hover: 0 2px 4px rgb(17 24 39 / 0.05),
+    0 16px 32px -12px rgb(17 24 39 / 0.18);
 }
 
 @theme inline {
@@ -55,5 +60,26 @@ body {
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 hover:shadow-md active:scale-[0.98];
+  }
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-sun-500 px-5 py-2.5 text-sm font-bold text-ink-900 shadow-sm transition hover:bg-sun-400 hover:shadow-md active:scale-[0.98];
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/20;
+  }
+  .card {
+    @apply overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-card transition;
+  }
+  .card-hover {
+    @apply hover:-translate-y-1 hover:border-brand-300 hover:shadow-card-hover;
+  }
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.2em] text-brand-600;
   }
 }

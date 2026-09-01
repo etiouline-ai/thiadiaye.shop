@@ -1,7 +1,6 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { headers } from "next/headers";
 import {
   createSession,
   setSessionCookie,
@@ -16,7 +15,7 @@ import {
   resetPasswordSchema,
   requestResetSchema,
 } from "@/lib/validations";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { sendEmail } from "@/lib/email";
 import {
   createEmailVerificationToken,
@@ -27,14 +26,24 @@ import {
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-async function clientIp(): Promise<string> {
-  const h = await headers();
-  const xff = h.get("x-forwarded-for");
-  if (xff) return xff.split(",")[0]?.trim() || "unknown";
-  return h.get("x-real-ip") ?? "unknown";
-}
-
 export type ActionResult = { error?: string; success?: boolean };
+
+function esc(value: string): string {
+  return value.replace(/[&<>"']/g, (c) => {
+    switch (c) {
+      case "&":
+        return "&amp;";
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case '"':
+        return "&quot;";
+      default:
+        return "&#39;";
+    }
+  });
+}
 
 function emailLayout(title: string, content: string): string {
   return `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">
@@ -78,7 +87,7 @@ export async function registerUser(input: unknown): Promise<ActionResult> {
       subject: "Confirmez votre adresse email",
       html: emailLayout(
         "Confirmation de votre compte",
-        `<p>Bonjour ${user.name},</p>
+        `<p>Bonjour ${esc(user.name)},</p>
          <p>Merci de vous être inscrit sur THIADIAYE.SHOP. Confirmez votre adresse email en cliquant sur le lien ci-dessous :</p>
          <p><a href="${SITE_URL}/auth/verifier?token=${raw}" style="display:inline-block;background:#15803d;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">Confirmer mon email</a></p>
          <p>Ce lien expire dans 1 heure.</p>`,
@@ -125,7 +134,7 @@ export async function requestPasswordResetAction(input: unknown): Promise<Action
         subject: "Réinitialisation de votre mot de passe",
         html: emailLayout(
           "Réinitialisation du mot de passe",
-          `<p>Bonjour ${user.name},</p>
+          `<p>Bonjour ${esc(user.name)},</p>
            <p>Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le lien ci-dessous :</p>
            <p><a href="${SITE_URL}/auth/reinitialiser?token=${raw}" style="display:inline-block;background:#15803d;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">Réinitialiser mon mot de passe</a></p>
            <p>Ce lien expire dans 1 heure. Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>`,

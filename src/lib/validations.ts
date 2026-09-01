@@ -78,6 +78,47 @@ export const listingSchema = z.object({
 
 export const featuredPriceSchema = z.object({
   listingId: z.string().min(1),
-  method: z.enum(["ORANGE_MONEY", "WAVE", "FREE_MONEY"]),
+  method: z.enum(["ORANGE_MONEY", "WAVE", "FREE_MONEY", "CARD"]),
   days: z.coerce.number().int().min(1).max(30).default(7),
+});
+
+export const shopPaymentSchema = z.object({
+  shopId: z.string().min(1),
+  method: z.enum(["ORANGE_MONEY", "WAVE", "FREE_MONEY", "CARD"]),
+});
+
+export const shopSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, "Le nom de la boutique doit contenir au moins 2 caractères")
+    .max(80, "Le nom de la boutique est trop long"),
+  description: z
+    .string()
+    .trim()
+    .max(2000, "La description est trop longue")
+    .optional()
+    .or(z.literal("")),
+  city: z.string().trim().max(60, "Ville invalide").optional().or(z.literal("")),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\+?\d{9,15}$/, "Numéro de téléphone invalide (ex: +221 77 123 45 67)")
+    .optional()
+    .or(z.literal("")),
+  whatsapp: z
+    .string()
+    .trim()
+    .regex(/^\+?\d{9,15}$/, "Numéro WhatsApp invalide")
+    .optional()
+    .or(z.literal("")),
+  website: z
+    .string()
+    .trim()
+    .url("Lien du site invalide (ex: https://www.maboutique.sn)")
+    .max(200, "Lien du site trop long")
+    .optional()
+    .or(z.literal("")),
+  facebook: z.string().trim().max(200).optional().or(z.literal("")),
+  instagram: z.string().trim().max(200).optional().or(z.literal("")),
 });

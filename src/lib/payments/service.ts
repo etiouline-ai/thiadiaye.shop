@@ -3,9 +3,75 @@ import {
   featuredPriceFCFA,
   FEATURED_MAX_DAYS,
   FEATURED_MIN_DAYS,
+  SHOP_CREATION_PRICE_FCFA,
 } from "@/lib/payments/pricing";
-import { initiatePayment, getProvider } from "@/lib/payments/provider";
+import { initiatePayment, paymentProviderEnum } from "@/lib/payments/provider";
 import type { PaymentMethod } from "@prisma/client";
+
+export async function createShopPayment(params: {
+  userId: string;
+  shopId: string;
+  method: PaymentMethod;
+}) {
+  const { userId, shopId, method } = params;
+
+  const shop = await prisma.shop.findUnique({
+    where: { id: shopId },
+    select: { id: true, ownerId: true, name: true, status: true },
+  });
+  if (!shop) throw new Error("Boutique introuvable");
+  if (shop.ownerId !== userId) {
+    throw new Error("Vous n'êtes pas le propriétaire de cette boutique");
+  }
+  if (shop.status === "ACTIVE") {
+    throw new Error("Votre boutique est déjà active");
+  }
+
+  const amount = SHOP_CREATION_PRICE_FCFA;
+  const reference = `SHOP-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
+
+  const payment = await prisma.payment.create({
+    data: {
+      userId,
+      shopId,
+      amount,
+      currency: "XOF",
+      method,
+      provider: paymentProviderEnum(),
+      type: "BUSINESS_PRO",
+      status: "PENDING",
+      metadata: { reference, shopName: shop.name },
+    },
+  });
+
+  const initiated = await initiatePayment({
+    amount,
+    currency: "XOF",
+    method,
+    description: `Création de boutique - ${shop.name}`,
+    reference,
+    metadata: { paymentId: payment.id, shopId },
+  });
+
+  await prisma.payment.update({
+    where: { id: payment.id },
+    data: {
+      providerTxId: initiated.providerTxId,
+      metadata: {
+        reference,
+        shopName: shop.name,
+        paymentUrl: initiated.paymentUrl,
+      },
+    },
+  });
+
+  return {
+    payment,
+    providerTxId: initiated.providerTxId,
+    paymentUrl: initiated.paymentUrl,
+    amount,
+  };
+}
 
 export async function createFeaturedPayment(params: {
   userId: string;
@@ -41,7 +107,7 @@ export async function createFeaturedPayment(params: {
       amount,
       currency: "XOF",
       method,
-      provider: getProvider() === "cinetpay" ? "CINETPAY" : "MOCK",
+      provider: paymentProviderEnum(),
       type: "FEATURED_LISTING",
       status: "PENDING",
       metadata: { reference, days, listingTitle: listing.title },
@@ -90,10 +156,25 @@ export async function confirmPaymentSuccess(paymentId: string) {
 
     if (payment.listingId && payment.type === "FEATURED_LISTING") {
       const now = new Date();
-      const until = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+      const current = await tx.listing.findUnique({
+        where: { id: payment.listingId },
+        select: { featuredUntil: true },
+      });
+      const base =
+        current?.featuredUntil && current.featuredUntil > now
+          ? current.featuredUntil
+          : now;
+      const until = new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
       await tx.listing.update({
         where: { id: payment.listingId },
         data: { featuredUntil: until, featuredBy: payment.method },
+      });
+    }
+
+    if (payment.shopId && payment.type === "BUSINESS_PRO") {
+      await tx.shop.update({
+        where: { id: payment.shopId },
+        data: { status: "ACTIVE" },
       });
     }
 

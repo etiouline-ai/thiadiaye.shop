@@ -7,6 +7,7 @@ import { ImageGallery } from "@/components/ImageGallery";
 import { ViewTracker } from "@/components/ViewTracker";
 import { ListingCard } from "@/components/ListingCard";
 import { DeleteListingButton } from "@/components/DeleteListingButton";
+import { ContactSeller } from "@/components/ContactSeller";
 import { AdSlot } from "@/components/AdSlot";
 import { adsSlots } from "@/lib/ads";
 
@@ -25,7 +26,15 @@ export default async function ListingDetailPage({
     include: {
       images: { orderBy: { position: "asc" } },
       category: { include: { parent: true } },
-      seller: { select: { id: true, name: true, businessName: true, email: true } },
+      seller: {
+        select: {
+          id: true,
+          name: true,
+          businessName: true,
+          email: true,
+          shop: { select: { slug: true, name: true, logoUrl: true, status: true } },
+        },
+      },
     },
   });
 
@@ -145,46 +154,87 @@ export default async function ListingDetailPage({
             <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-ink-600">
               Contacter le vendeur
             </h3>
-            <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-100 text-xl font-bold text-brand-700">
-                {(listing.seller.businessName ?? listing.seller.name)
-                  .charAt(0)
-                  .toUpperCase()}
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-ink-900">
-                  {listing.seller.businessName ?? listing.seller.name}
+            {listing.status === "PUBLISHED" && !isOwner ? (
+              <>
+                <div className="mb-3 flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-xl font-bold text-brand-700">
+                    {listing.seller.shop?.status === "ACTIVE" && listing.seller.shop.logoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={listing.seller.shop.logoUrl}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      (listing.seller.businessName ?? listing.seller.name)
+                        .charAt(0)
+                        .toUpperCase()
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-ink-900">
+                      {listing.seller.shop?.status === "ACTIVE" &&
+                      listing.seller.shop.name
+                        ? listing.seller.shop.name
+                        : (listing.seller.businessName ?? listing.seller.name)}
+                    </div>
+                    <div className="text-xs text-ink-400">
+                      Vendeur vérifié sur THIADIAYE.SHOP
+                    </div>
+                  </div>
                 </div>
-                <div className="text-xs text-ink-400">
-                  Vendeur vérifié sur THIADIAYE.SHOP
+
+                {listing.seller.shop?.status === "ACTIVE" && (
+                  <Link
+                    href={`/boutique/${listing.seller.shop.slug}`}
+                    className="mb-2 flex items-center justify-center gap-2 rounded-lg border border-brand-200 bg-brand-50 px-4 py-2.5 text-sm font-semibold text-brand-700 transition hover:bg-brand-100"
+                  >
+                    🏪 Voir la boutique : {listing.seller.shop.name}
+                  </Link>
+                )}
+
+                {/* Numéro masqué : révélé via la conversation */}
+                <div className="mb-3 flex items-center gap-2 rounded-lg border border-ink-200 bg-ink-50 px-3 py-2.5 text-sm text-ink-500">
+                  <span className="text-base">🔒</span>
+                  <span className="flex-1">Numéro masqué</span>
+                  <span className="text-lg">📞</span>
+                  <span className="text-lg">💬</span>
                 </div>
-              </div>
-            </div>
 
-            {listing.phone && (
-              <a
-                href={`tel:${listing.phone}`}
-                className="mb-2 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-brand-700"
-              >
-                <span className="text-base">📞</span> Appeler : {listing.phone}
-              </a>
-            )}
-            {whatsapp && (
-              <a
-                href={waLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-3 text-sm font-bold text-white transition hover:opacity-90"
-              >
-                <span className="text-base">💬</span> Contacter sur WhatsApp
-              </a>
-            )}
+                <ContactSeller listingId={listing.id} />
 
-            {listing.status === "PUBLISHED" && (
-              <p className="mt-3 text-center text-xs text-ink-400">
-                <span className="text-base">🔒</span> Ne payez jamais à l'avance. Rencontrez le vendeur dans un
-                lieu sûr.
-              </p>
+                <p className="mt-3 text-center text-xs text-ink-400">
+                  <span className="text-base">🔒</span> Ne payez jamais à
+                  l'avance. Rencontrez le vendeur dans un lieu sûr.
+                </p>
+              </>
+            ) : (
+              <>
+                {(listing.phone || listing.whatsapp) && (
+                  <div className="mb-3 rounded-lg border border-ink-200 bg-ink-50 px-3 py-2 text-center text-sm text-ink-600">
+                    <span className="text-base">ℹ️</span> Coordonnées visibles
+                    par vous seul (propriétaire / administrateur).
+                  </div>
+                )}
+                {listing.phone && (
+                  <a
+                    href={`tel:${listing.phone}`}
+                    className="mb-2 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-brand-700"
+                  >
+                    <span className="text-base">📞</span> Appeler : {listing.phone}
+                  </a>
+                )}
+                {listing.whatsapp && (
+                  <a
+                    href={waLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-3 text-sm font-bold text-white transition hover:opacity-90"
+                  >
+                    <span className="text-base">💬</span> Contacter sur WhatsApp
+                  </a>
+                )}
+              </>
             )}
           </div>
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getFile, uploadsPublicUrl } from "@/lib/storage";
+import { getFile, uploadsPublicUrl, S3_PREFIXES } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
@@ -9,9 +9,11 @@ export async function GET(
 ) {
   const { filename } = await params;
 
-  const publicUrl = uploadsPublicUrl(filename);
-  if (publicUrl) {
-    return NextResponse.redirect(publicUrl, 307);
+  for (const prefix of S3_PREFIXES) {
+    const publicUrl = uploadsPublicUrl(filename, prefix);
+    if (publicUrl) {
+      return NextResponse.redirect(publicUrl, 307);
+    }
   }
 
   const file = await getFile(filename);
