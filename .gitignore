@@ -51,6 +51,8 @@ server.log
 server-3001.log
 server.err.log
 server-3001.err.log
+server-3111.log
+server-*.log
 
 # captures d'écran d'aperçu
 /apercu-mobile/
