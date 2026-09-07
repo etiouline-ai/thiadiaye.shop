@@ -43,7 +43,7 @@ export function LoginForm() {
           type="email"
           required
           autoComplete="email"
-          className="w-full rounded-lg border border-ink-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+          className="w-full rounded-lg border border-ink-300 px-4 py-2.5 text-sm outline-none focus:border-ink-900 focus:ring-0"
         />
       </div>
       <div>
@@ -67,10 +67,10 @@ export function LoginForm() {
           Mot de passe oublié ?
         </Link>
       </div>
-      <button
+<button
         type="submit"
         disabled={pending}
-        className="w-full rounded-lg bg-brand-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-brand-700 disabled:opacity-50"
+        className="w-full rounded-lg bg-brand-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-50"
       >
         {pending ? "Connexion…" : "Se connecter"}
       </button>

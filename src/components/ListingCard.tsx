@@ -42,8 +42,8 @@ export function ListingCard({ listing }: { listing: ListingWithImages }) {
             </span>
           </div>
         )}
-        {featured && listing.status === "PUBLISHED" && (
-          <span className="absolute left-2.5 top-2.5 rounded-full bg-sun-500 px-2.5 py-1 text-xs font-bold text-ink-900 shadow-md">
+{featured && listing.status === "PUBLISHED" && (
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-ink-900 shadow-card">
             <span className="text-sm">⭐</span> À la une
           </span>
         )}

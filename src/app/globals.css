@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-50: #f0fdf4;
-  --color-brand-100: #dcfce7;
-  --color-brand-200: #bbf7d0;
-  --color-brand-300: #86efac;
-  --color-brand-400: #4ade80;
-  --color-brand-500: #22c55e;
-  --color-brand-600: #16a34a;
-  --color-brand-700: #15803d;
-  --color-brand-800: #166534;
-  --color-brand-900: #14532d;
+  --color-brand-50: #ffd1da;
+  --color-brand-100: #ffd1da;
+  --color-brand-200: #ffb3c1;
+  --color-brand-300: #ff8fa3;
+  --color-brand-400: #ff6b82;
+  --color-brand-500: #ff5470;
+  --color-brand-600: #ff385c;
+  --color-brand-700: #e00b41;
+  --color-brand-800: #bd0a38;
+  --color-brand-900: #9c0a32;
 
   --color-sun-50: #fffbeb;
   --color-sun-100: #fef3c7;
@@ -18,21 +18,21 @@
   --color-sun-400: #facc15;
   --color-sun-500: #eab308;
 
-  --color-ink-50: #f9fafb;
-  --color-ink-100: #f3f4f6;
-  --color-ink-200: #e5e7eb;
-  --color-ink-300: #d1d5db;
-  --color-ink-400: #9ca3af;
-  --color-ink-500: #6b7280;
-  --color-ink-600: #4b5563;
-  --color-ink-700: #374151;
-  --color-ink-800: #1f2937;
-  --color-ink-900: #111827;
+  --color-ink-50: #f2f2f2;
+  --color-ink-100: #f7f7f7;
+  --color-ink-200: #ebebeb;
+  --color-ink-300: #dddddd;
+  --color-ink-400: #929292;
+  --color-ink-500: #6a6a6a;
+  --color-ink-600: #3f3f3f;
+  --color-ink-700: #3f3f3f;
+  --color-ink-800: #222222;
+  --color-ink-900: #222222;
 
-  --shadow-card: 0 1px 2px rgb(17 24 39 / 0.04),
-    0 8px 24px -12px rgb(17 24 39 / 0.12);
-  --shadow-card-hover: 0 2px 4px rgb(17 24 39 / 0.05),
-    0 16px 32px -12px rgb(17 24 39 / 0.18);
+  --shadow-card: rgba(0, 0, 0, 0.02) 0 0 0 1px,
+    rgba(0, 0, 0, 0.04) 0 2px 6px 0, rgba(0, 0, 0, 0.1) 0 4px 8px 0;
+  --shadow-card-hover: rgba(0, 0, 0, 0.02) 0 0 0 1px,
+    rgba(0, 0, 0, 0.04) 0 2px 6px 0, rgba(0, 0, 0, 0.1) 0 4px 8px 0;
 }
 
 @theme inline {
@@ -65,21 +65,21 @@ body {
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 hover:shadow-md active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700 active:scale-[0.98];
   }
   .btn-accent {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-sun-500 px-5 py-2.5 text-sm font-bold text-ink-900 shadow-sm transition hover:bg-sun-400 hover:shadow-md active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-ink-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-ink-800 active:scale-[0.98];
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/20;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-white/10 px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/20;
   }
   .card {
-    @apply overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-card transition;
+    @apply overflow-hidden rounded-lg border border-ink-200 bg-white shadow-card transition;
   }
   .card-hover {
-    @apply hover:-translate-y-1 hover:border-brand-300 hover:shadow-card-hover;
+    @apply hover:-translate-y-0 hover:border-brand-300 hover:shadow-card-hover;
   }
   .eyebrow {
-    @apply text-xs font-bold uppercase tracking-[0.2em] text-brand-600;
+    @apply text-xs font-bold uppercase tracking-[0.2em] text-ink-500;
   }
 }

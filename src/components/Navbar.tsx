@@ -19,7 +19,7 @@ export async function Navbar() {
 
   return (
     <header className="sticky top-0 z-40">
-      <div className="bg-gradient-to-r from-brand-900 via-brand-800 to-brand-700 text-white">
+      <div className="bg-ink-900 text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-1.5 text-xs">
           <span className="font-medium">
             <span className="text-base">📍</span> Thiadiaye &amp; tout le Sénégal — publiez gratuitement
@@ -38,15 +38,15 @@ export async function Navbar() {
         </div>
       </div>
 
-      <div className="border-b border-ink-200 bg-white/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80">
+      <div className="border-b border-ink-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
         <div className="mx-auto max-w-6xl px-4 py-3">
           <div className="flex items-center gap-3">
             <Link href="/" className="shrink-0">
-              <span className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-ink-900">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 text-base text-white shadow-sm">
+              <span className="flex items-center gap-2 text-xl font-bold tracking-tight text-ink-900">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-base text-white shadow-sm">
                   🛍️
                 </span>
-                THIADIAYE<span className="text-sun-500">.SHOP</span>
+                THIADIAYE<span className="text-brand-600">.SHOP</span>
               </span>
             </Link>
 
@@ -77,7 +77,7 @@ export async function Navbar() {
             <div className="ml-auto flex items-center gap-2">
               <Link
                 href="/annonces/nouvelles"
-                className="hidden rounded-full bg-sun-500 px-5 py-2.5 text-sm font-bold text-ink-900 shadow-sm transition hover:bg-sun-400 sm:inline-flex"
+                className="hidden rounded-full bg-brand-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700 sm:inline-flex"
               >
                 + Publier une annonce
               </Link>
