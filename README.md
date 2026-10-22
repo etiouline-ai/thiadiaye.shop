@@ -46,8 +46,7 @@ cp .env.example .env   # puis renseignez JWT_SECRET
 JWT_SECRET : node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 
 # 4. Schéma + extension unaccent + index de recherche
-npx prisma db push
-Get-Content prisma\indexes.sql | docker exec -i thiadiaye-postgres psql -U thiadiaye -d thiadiaye_shop -v ON_ERROR_STOP=1
+npx prisma migrate deploy
 npm run db:seed
 
 # 5. Lancer
@@ -80,11 +79,19 @@ npx tsx scripts/verify-upload-route.ts # route de servation d'images (nécessite
 ## Déploiement (production)
 
 ### 1. Base de données
-PostgreSQL managé (Neon, Supabase, Railway, Render…). Renseignez `DATABASE_URL`, puis :
+PostgreSQL managé (Neon, Supabase, Railway, Render…). Renseignez `DATABASE_URL`, puis appliquez les migrations :
 ```bash
-npx prisma db push   # ou npx prisma migrate deploy
+npx prisma migrate deploy
 ```
-Créer l'extension sur la base distante : `CREATE EXTENSION IF NOT EXISTS unaccent;`
+Les migrations incluent déjà l'extension `unaccent`, `pg_trgm` et les index de recherche (`prisma/migrations/1_search_indexes`). Aucune étape SQL manuelle n'est nécessaire.
+
+> Les commandes de build (`netlify.toml`, `vercel.json`) exécutent `prisma migrate deploy` automatiquement à chaque déploiement.
+
+**Seed initial (une seule fois)** : après le premier déploiement, créez les catégories et le compte admin :
+```bash
+DATABASE_URL="<url_prod>" npm run db:seed
+```
+Puis changez immédiatement le mot de passe admin (`admin@thiadiaye.shop` / `Admin@2026`).
 
 ### 2. Variables d'environnement
 | Variable | Rôle |

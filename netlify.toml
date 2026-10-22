@@ -1,6 +1,6 @@
 # Netlify — Next.js (détecté automatiquement, adaptateur OpenNext)
 [build]
-  command = "prisma generate && next build"
+  command = "prisma generate && prisma migrate deploy && next build"
   publish = ".next"
 
 [build.environment]
