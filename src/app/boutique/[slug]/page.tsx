@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
@@ -207,8 +208,15 @@ export default async function ShopPage({
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {listings.map((l) => (
-              <ListingCard key={l.id} listing={l} />
+            {listings.map((l, i) => (
+              <Fragment key={l.id}>
+                <ListingCard listing={l} />
+                {i === 5 && (
+                  <div className="col-span-full">
+                    <AdSlot slot={adsSlots.listInline} className="min-h-24" label="Publicité" />
+                  </div>
+                )}
+              </Fragment>
             ))}
           </div>
         )}

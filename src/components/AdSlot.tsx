@@ -27,7 +27,18 @@ export function AdSlot({
     }
   }, [slot]);
 
-  if (!adsClientId || !slot) return null;
+  if (!adsClientId || !slot) {
+    return (
+      <div
+        className={`flex min-h-[120px] w-full items-center justify-center rounded-xl border border-dashed border-ink-300 bg-ink-50 ${className ?? ""}`}
+        aria-label={label ?? "Publicité"}
+      >
+        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
+          Espace publicitaire
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className={className} aria-label={label ?? "Publicité"}>

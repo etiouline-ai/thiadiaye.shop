@@ -18,7 +18,7 @@ export function Footer() {
           </p>
           <ul className="mt-4 space-y-1.5 text-sm text-brand-200">
             <li>📍 Thiadiaye, Sénégal</li>
-            <li>📞 +221 77 000 00 00</li>
+            <li>📞 +221 75 656 8140</li>
             <li>✉️ contact@thiadiaye.shop</li>
           </ul>
         </div>

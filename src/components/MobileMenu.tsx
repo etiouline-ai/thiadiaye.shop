@@ -85,11 +85,11 @@ export function MobileMenu({ session }: { session: SessionUser | null }) {
               Contact
             </Link>
             <a
-              href="tel:+221770000000"
+              href="tel:+221756568140"
               onClick={close}
               className="block rounded-lg px-3 py-2.5 text-ink-600 hover:bg-ink-50"
             >
-              +221 77 000 00 00
+              +221 75 656 8140
             </a>
           </nav>
         </div>

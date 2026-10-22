@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import { prisma } from "@/lib/db";
 import { ListingCard } from "@/components/ListingCard";
 import { AdSlot } from "@/components/AdSlot";
@@ -277,8 +278,15 @@ export default async function ListingsPage({
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-              {listings.map((l) => (
-                <ListingCard key={l.id} listing={l} />
+              {listings.map((l, i) => (
+                <Fragment key={l.id}>
+                  <ListingCard listing={l} />
+                  {i === 5 && (
+                    <div className="col-span-full">
+                      <AdSlot slot={adsSlots.listInline} className="min-h-24" label="Publicité" />
+                    </div>
+                  )}
+                </Fragment>
               ))}
             </div>
           )}
@@ -306,6 +314,10 @@ export default async function ListingsPage({
               )}
             </div>
           )}
+
+          <div className="mt-8">
+            <AdSlot slot={adsSlots.list} className="min-h-24" label="Publicité" />
+          </div>
         </div>
       </div>
     </div>

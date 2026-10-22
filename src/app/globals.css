@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-50: #ffd1da;
-  --color-brand-100: #ffd1da;
-  --color-brand-200: #ffb3c1;
-  --color-brand-300: #ff8fa3;
-  --color-brand-400: #ff6b82;
-  --color-brand-500: #ff5470;
-  --color-brand-600: #ff385c;
-  --color-brand-700: #e00b41;
-  --color-brand-800: #bd0a38;
-  --color-brand-900: #9c0a32;
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-200: #a7f3d0;
+  --color-brand-300: #6ee7b7;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+  --color-brand-900: #064e3b;
 
   --color-sun-50: #fffbeb;
   --color-sun-100: #fef3c7;
@@ -42,10 +42,11 @@
 html {
   scroll-behavior: smooth;
   font-size: 18px;
+  background: #F9FAFB;
 }
 
 body {
-  @apply bg-white text-ink-800 antialiased;
+  @apply bg-[#F9FAFB] text-[#111827] antialiased;
 }
 
 @layer utilities {

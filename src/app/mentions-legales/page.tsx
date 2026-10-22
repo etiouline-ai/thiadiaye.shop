@@ -13,7 +13,7 @@ export default function LegalPage() {
         </p>
         <p>
           <strong className="text-ink-800">Contact :</strong> contact@thiadiaye.shop ·
-          +221 77 000 00 00
+          +221 75 656 8140
         </p>
         <p>
           <strong className="text-ink-800">Directeur de la publication :</strong> le

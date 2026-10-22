@@ -31,8 +31,8 @@ export async function Navbar() {
             <Link href="/contact" className="hover:underline">
               Contact
             </Link>
-            <a href="tel:+221770000000" className="hover:underline">
-              +221 77 000 00 00
+            <a href="tel:+221756568140" className="hover:underline">
+              +221 75 656 8140
             </a>
           </div>
         </div>
@@ -43,8 +43,9 @@ export async function Navbar() {
           <div className="flex items-center gap-3">
             <Link href="/" className="shrink-0">
               <span className="flex items-center gap-2 text-xl font-bold tracking-tight text-ink-900">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-base text-white shadow-sm">
-                  🛍️
+                <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white text-base text-white shadow-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/logo.png" alt="THIADIAYE.SHOP" className="h-full w-full object-cover" />
                 </span>
                 THIADIAYE<span className="text-brand-600">.SHOP</span>
               </span>
@@ -142,16 +143,16 @@ export async function Navbar() {
       </div>
 
       <nav className="border-b border-ink-200 bg-white shadow-sm">
-        <div className="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-4 py-0 text-sm">
+        <div className="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-4 py-1 text-base">
           <Link
             href="/annonces"
-            className="whitespace-nowrap rounded-full px-3 py-2 font-semibold text-brand-700 hover:bg-brand-50"
+            className="whitespace-nowrap rounded-full px-4 py-2.5 font-bold text-brand-700 hover:bg-brand-50"
           >
             Toutes les annonces
           </Link>
           <Link
             href="/boutiques"
-            className="whitespace-nowrap rounded-full px-3 py-2 font-semibold text-ink-800 hover:bg-brand-50 hover:text-brand-700"
+            className="whitespace-nowrap rounded-full px-4 py-2.5 font-bold text-ink-800 hover:bg-brand-50 hover:text-brand-700"
           >
             🏪 Boutiques
           </Link>
@@ -159,9 +160,9 @@ export async function Navbar() {
             <Link
               key={cat.slug}
               href={`/annonces?category=${cat.slug}`}
-              className="whitespace-nowrap rounded-full px-3 py-2 text-ink-600 transition hover:bg-ink-50 hover:text-brand-700"
+              className="whitespace-nowrap rounded-full px-4 py-2.5 font-bold text-ink-700 transition hover:bg-ink-50 hover:text-brand-700"
             >
-              {cat.icon && <span className="mr-1 text-base">{cat.icon}</span>}
+              {cat.icon && <span className="mr-1 text-lg">{cat.icon}</span>}
               {cat.name}
             </Link>
           ))}

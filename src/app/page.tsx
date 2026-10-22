@@ -139,6 +139,11 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* PUBLICITÉ HAUT */}
+      <div className="mx-auto max-w-6xl px-4 pt-8">
+        <AdSlot slot={adsSlots.homeTop} className="min-h-24" label="Publicité" />
+      </div>
+
       {/* CATEGORIES */}
       <section className="mx-auto max-w-6xl px-4 py-10">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
@@ -244,6 +249,11 @@ export default async function HomePage() {
           </div>
         )}
       </section>
+
+      {/* PUBLICITÉ BAS */}
+      <div className="mx-auto max-w-6xl px-4 pb-14">
+        <AdSlot slot={adsSlots.homeBottom} className="min-h-24" label="Publicité" />
+      </div>
     </div>
   );
 }

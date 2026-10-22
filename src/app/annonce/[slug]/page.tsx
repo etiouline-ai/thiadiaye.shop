@@ -275,6 +275,12 @@ export default async function ListingDetailPage({
           </div>
         </section>
       )}
+
+      <AdSlot
+        slot={adsSlots.detailBottom}
+        className="mx-auto mt-10 min-h-24 max-w-3xl"
+        label="Publicité"
+      />
     </div>
   );
 }
