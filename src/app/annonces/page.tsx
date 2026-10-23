@@ -58,18 +58,33 @@ export default async function ListingsPage({
     status: "PUBLISHED",
   };
   if (q) {
-    const normalized = q
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
-    const like = `%${normalized}%`;
-    const rows = await prisma.$queryRaw<{ id: string }[]>`
-      SELECT id FROM "Listing"
-      WHERE status = 'PUBLISHED'
-        AND (immutable_unaccent(lower(title)) LIKE ${like} OR immutable_unaccent(lower(description)) LIKE ${like})
-      LIMIT 500
-    `;
-    where.id = { in: rows.map((r) => r.id) };
+    try {
+      const normalized = q
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+      const like = `%${normalized}%`;
+      const rows = await prisma.$queryRaw<{ id: string }[]>`
+        SELECT id FROM "Listing"
+        WHERE status = 'PUBLISHED'
+          AND (immutable_unaccent(lower(title)) LIKE ${like} OR immutable_unaccent(lower(description)) LIKE ${like})
+        LIMIT 500
+      `;
+      if (rows.length > 0) {
+        where.id = { in: rows.map((r) => r.id) };
+      } else {
+        // fallback si fonction absente ou aucun résultat via unaccent
+        where.OR = [
+          { title: { contains: q, mode: "insensitive" } },
+          { description: { contains: q, mode: "insensitive" } },
+        ];
+      }
+    } catch {
+      where.OR = [
+        { title: { contains: q, mode: "insensitive" } },
+        { description: { contains: q, mode: "insensitive" } },
+      ];
+    }
   }
   if (selectedIds) where.category = { slug: { in: selectedIds } };
   if (city) where.city = { contains: city, mode: "insensitive" };
